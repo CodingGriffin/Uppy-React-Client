@@ -1,114 +1,117 @@
-import React, { useState } from 'react'
-import Uppy from '@uppy/core'
-import { Dashboard } from '@uppy/react'
-import AwsS3 from '@uppy/aws-s3'
+import React, { useState, useEffect } from 'react'
 import '@uppy/core/dist/style.css'
 import '@uppy/dashboard/dist/style.css'
-
-// Default companion URL - replace with your actual URL in production
-const COMPANION_URL = 'http://companion.uppy.io'
+import { useUppy, useFileManagerUppy } from './hooks/useUppy'
+import Initial from './components/WorkflowStages/Initial'
+import FileUpload from './components/WorkflowStages/FileUpload'
+import Proofing from './components/WorkflowStages/Proofing'
+import Revision from './components/WorkflowStages/Revision'
+import Approved from './components/WorkflowStages/Approved'
+import FileManager from './components/FileManager'
 
 function App() {
-  const [activeView, setActiveView] = useState('upload') // 'upload' or 'view'
-  
-  const uppy = React.useMemo(() => {
-    return new Uppy({ 
-      debug: true,
-      allowMultipleUploadBatches: true,
-      restrictions: {
-        allowedFileTypes: null, // Allow all file types
-        maxFileSize: null, // No size limit
-      }
+  const [workflowState, setWorkflowState] = useState('initial')
+  const [jobHistory, setJobHistory] = useState([])
+  const [selectedJob, setSelectedJob] = useState(null)
+  const [showFileManager, setShowFileManager] = useState(false)
+
+  const uppy = useUppy()
+  const fileManagerUppy = useFileManagerUppy()
+
+  useEffect(() => {
+    uppy.on('complete', (result) => {
+      console.log('Upload complete:', result.successful)
+      setWorkflowState('proofing')
     })
-    .use(AwsS3, {
-      companionUrl: COMPANION_URL,
-      // Make sure to configure these in production
-      acl: 'private',
-      timeout: 60000
-    })
+  }, [uppy])
+
+  useEffect(() => {
+    const mockJobs = [
+      { id: 1, name: 'Previous Job 1', date: '2024-03-20', files: [] },
+      { id: 2, name: 'Previous Job 2', date: '2024-03-15', files: [] },
+    ]
+    setJobHistory(mockJobs)
   }, [])
 
-  // Configure Uppy to handle folders
-  uppy.setOptions({
-    onBeforeFileAdded: (currentFile) => {
-      // Handle empty folders by creating a 0-byte placeholder file
-      if (currentFile.data.size === 0 && currentFile.data.type === '') {
-        currentFile.meta.isEmptyFolder = true
-      }
-      return currentFile
+  const loadExistingFiles = async (jobId) => {
+    console.log('Loading files for job:', jobId)
+    const files = [
+      { name: 'file1.pdf', size: 1024, type: 'application/pdf' },
+      { name: 'file2.jpg', size: 2048, type: 'image/jpeg' },
+    ]
+    
+    files.forEach(file => {
+      fileManagerUppy.addFile({
+        name: file.name,
+        type: file.type,
+        data: new Blob([]),
+        size: file.size,
+        isRemote: true,
+        remote: {
+          serverUrl: COMPANION_URL,
+          url: `s3://bucket-name/${jobId}/${file.name}`,
+        },
+      })
+    })
+  }
+
+  const handleSelectJob = (job) => {
+    setSelectedJob(job)
+    loadExistingFiles(job.id)
+    setShowFileManager(true)
+  }
+
+  const renderWorkflowStage = () => {
+    switch (workflowState) {
+      case 'initial':
+        return (
+          <Initial
+            onUploadNew={() => setWorkflowState('uploading')}
+            onManageFiles={() => setShowFileManager(true)}
+            jobHistory={jobHistory}
+            onSelectJob={handleSelectJob}
+          />
+        )
+      case 'uploading':
+        return (
+          <FileUpload
+            uppy={uppy}
+            onBack={() => setWorkflowState('initial')}
+          />
+        )
+      case 'proofing':
+        return (
+          <Proofing
+            onRequestRevision={() => setWorkflowState('revision')}
+            onApprove={() => setWorkflowState('approved')}
+          />
+        )
+      case 'revision':
+        return <Revision uppy={uppy} />
+      case 'approved':
+        return (
+          <Approved
+            onStartNew={() => setWorkflowState('initial')}
+          />
+        )
+      default:
+        return null
     }
-  })
-
-  // Log upload results
-  uppy.on('complete', (result) => {
-    console.log('Upload complete! We\'ve uploaded these files:', result.successful)
-  })
-
-  const viewerUppy = React.useMemo(() => {
-    return new Uppy({ debug: true })
-    .use(AwsS3, {
-      companionUrl: COMPANION_URL,
-    })
-  }, [])
+  }
 
   return (
     <div className="app">
-      <div className="nav-buttons" style={{ margin: '20px', textAlign: 'center' }}>
-        <button 
-          onClick={() => setActiveView('upload')}
-          style={{ 
-            margin: '0 10px',
-            padding: '10px 20px',
-            backgroundColor: activeView === 'upload' ? '#1b5dab' : '#666',
-            color: 'white',
-            border: 'none',
-            borderRadius: '4px',
-            cursor: 'pointer'
+      {showFileManager ? (
+        <FileManager
+          uppy={fileManagerUppy}
+          selectedJob={selectedJob}
+          onBack={() => {
+            setShowFileManager(false)
+            setSelectedJob(null)
           }}
-        >
-          Upload Files
-        </button>
-        <button 
-          onClick={() => setActiveView('view')}
-          style={{ 
-            margin: '0 10px',
-            padding: '10px 20px',
-            backgroundColor: activeView === 'view' ? '#1b5dab' : '#666',
-            color: 'white',
-            border: 'none',
-            borderRadius: '4px',
-            cursor: 'pointer'
-          }}
-        >
-          View Files
-        </button>
-      </div>
-
-      {activeView === 'upload' ? (
-        <div>
-          <h2 style={{ textAlign: 'center' }}>Upload Folders & Files</h2>
-          <Dashboard
-            uppy={uppy}
-            proudlyDisplayPoweredByUppy={false}
-            showProgressDetails
-            height={450}
-            width="100%"
-            note="You can drag & drop both files and folders here"
-          />
-        </div>
+        />
       ) : (
-        <div>
-          <h2 style={{ textAlign: 'center' }}>View Uploaded Files</h2>
-          <Dashboard
-            uppy={viewerUppy}
-            proudlyDisplayPoweredByUppy={false}
-            showProgressDetails
-            height={450}
-            width="100%"
-            disabled={true}
-            disableLocalFiles={true}
-          />
-        </div>
+        renderWorkflowStage()
       )}
     </div>
   )
