@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react'
 import Uppy from '@uppy/core'
 import { Dashboard } from '@uppy/react'
+import { COMPANION_URL, COMPANION_ALLOWED_HOSTS } from '@uppy/transloadit';
 import DashboardPlugin from '@uppy/dashboard'
 import AwsS3 from '@uppy/aws-s3'
 import Webcam from '@uppy/webcam'
+import Dropbox from '@uppy/dropbox'
 import ScreenCapture from '@uppy/screen-capture'
 import '@uppy/core/dist/style.min.css'
 import '@uppy/dashboard/dist/style.min.css'
@@ -164,10 +166,15 @@ export default function UppyUploader() {
       //   target: Dashboard,
       //   companionUrl: 'http://45.144.28.239:8082'
       // })
-      // .use(Dropbox, {
-      //   target: Dashboard,
-      //   companionUrl: 'http://45.144.28.239:8082'
-      // })
+      .use(Dropbox, {
+        target: DashboardPlugin,
+        companionUrl: COMPANION_URL,
+        companionAllowedHosts: COMPANION_ALLOWED_HOSTS,
+        // companionKeysParams: {
+        //   key: "whc8tg2pockrsqj",
+        //   credentialsName: 'credential_for_uppy_test_with_dropbox',
+        // },
+      })
       .use(Webcam, {
         target: DashboardPlugin
       })
