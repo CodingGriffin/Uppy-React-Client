@@ -1,8 +1,14 @@
-import React from 'react';
-import UppyUploader from './components/UppyUploader'
-import { Package2, PaintBucket, Database } from 'lucide-react';
+import React, { useState } from 'react';
+import { UppyUploader } from './components/UppyUploader'
+import { ViewFiles } from './components/ViewFiles';
+import { Package2, PaintBucket, Database, Upload, Eye } from 'lucide-react';
+import { useUppy } from './hooks/useUppy';
+
+type View = 'upload' | 'view';
 
 function App() {
+  const [currentView, setCurrentView] = useState<View>('upload');
+  const uppy = useUppy();
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Main Header */}
@@ -43,12 +49,45 @@ function App() {
                   <Database className="w-5 h-5 text-orange-600" />
                   <span className="font-medium text-orange-900">DATA</span>
                 </div>
+
+                <div className="border-t border-gray-200 pt-4">
+                  <button
+                    onClick={() => setCurrentView('upload')}
+                    className={`flex items-center gap-3 p-3 w-full rounded-lg transition-colors ${
+                      currentView === 'upload'
+                        ? 'bg-indigo-100 text-indigo-900'
+                        : 'hover:bg-gray-100 text-gray-700'
+                    }`}
+                  >
+                    <Upload className="w-5 h-5" />
+                    <span className="font-medium">Upload Files</span>
+                  </button>
+                  <button
+                    onClick={() => setCurrentView('view')}
+                    className={`flex items-center gap-3 p-3 w-full rounded-lg transition-colors ${
+                      currentView === 'view'
+                        ? 'bg-indigo-100 text-indigo-900'
+                        : 'hover:bg-gray-100 text-gray-700'
+                    }`}
+                  >
+                    <Eye className="w-5 h-5" />
+                    <span className="font-medium">View Files</span>
+                  </button>
+                </div>
               </div>
             </div>
 
             {/* Main Content Area */}
             <div className="flex-1 p-4">
-              <UppyUploader />
+              {currentView === 'upload' ? (
+                <UppyUploader uppy={uppy} />
+              ) : (
+                <></>
+                // <ViewFiles files={files.map(name => ({
+                //   name,
+                //   url: `https://${import.meta.env.VITE_AWS_BUCKET}.s3.${import.meta.env.VITE_AWS_REGION}.amazonaws.com/${name}`
+                // }))} />
+              )}
             </div>
           </div>
         </div>
