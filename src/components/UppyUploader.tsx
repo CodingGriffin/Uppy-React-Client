@@ -11,24 +11,6 @@ import '@uppy/core/dist/style.min.css'
 import '@uppy/dashboard/dist/style.min.css'
 import React from 'react';
 
-function serializeSubPart(key, value) {
-  if (typeof value !== 'object') {
-    return [[key, value]]
-  }
-  
-  if (Array.isArray(value)) {
-    return value.flatMap(val => serializeSubPart(`${key}[]`, val))
-  }
-  
-  return Object.entries(value).flatMap(([subkey, val]) => 
-    serializeSubPart(key ? `${key}[${subkey}]` : subkey, val)
-  )
-}
-
-function serialize(data) {
-  return new URLSearchParams(serializeSubPart(null, data))
-}
-
 interface UploadDashboardProps {
   uppy: Uppy;
 }

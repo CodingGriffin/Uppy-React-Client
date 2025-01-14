@@ -8,7 +8,7 @@ import ScreenCapture from '@uppy/screen-capture'
 import '@uppy/core/dist/style.min.css'
 import '@uppy/dashboard/dist/style.min.css'
 
-const endPoint= " https://1b8a-45-144-28-239.ngrok-free.app"
+const endPoint= "https://everyusb.info"
 
 function serializeSubPart(key, value) {
   if (typeof value !== 'object') {
@@ -215,8 +215,9 @@ export function useUppy() {
           // uppy.off('file-removed', fileRemovedHandler);
           uppy.off('upload-success', uploadSuccessHandler);
           uppy.off('upload-error', uploadErrorHandler);
+          uppy.clear();
         };
-      }, [uppy]);
+      }, []);
 
     return { uppy, files };
   // })
