@@ -27,6 +27,7 @@ function serialize(data) {
 }
 
 export function useUppy() {
+  const [files, setFiles] = useState([]);
   // const [uppy] = useState(() => {
     const uppy = new Uppy({
       id: 'uppy',
@@ -176,6 +177,45 @@ export function useUppy() {
       .use(Webcam)
       .use(ScreenCapture)
 
-    return uppy
+      useEffect(() => {
+        const fileAddedHandler = (file) => {
+          console.log("Added file name: ", file.name)
+          setFiles(prev => [...prev, file.name]);
+        };
+    
+        const fileRemovedHandler = (file) => {
+          console.log("Removed file name: ", file.name)
+          setFiles(prev => prev.filter(name => name !== file.name));
+        };
+    
+        const uploadSuccessHandler = (file, response) => {
+          console.log('Upload successful:', file.name);
+          console.log('S3 response:', response);
+          
+          // The file URL in S3 will typically be:
+          const fileUrl = response.uploadURL;
+          setFiles(prev => [...prev, {name: file.name, url: fileUrl}]);
+          console.log('File URL:', fileUrl);
+        };
+    
+        const uploadErrorHandler = (file, error, response) => {
+          console.error('Upload error:', file.name, error);
+          console.error('S3 response:', response);
+        };
+    
+        // uppy.on('file-added', fileAddedHandler);
+        // uppy.on('file-removed', fileRemovedHandler);
+        uppy.on('upload-success', uploadSuccessHandler);
+        uppy.on('upload-error', uploadErrorHandler);
+    
+        return () => {
+          // uppy.off('file-added', fileAddedHandler);
+          // uppy.off('file-removed', fileRemovedHandler);
+          uppy.off('upload-success', uploadSuccessHandler);
+          uppy.off('upload-error', uploadErrorHandler);
+        };
+      }, []);
+
+    return { uppy, files };
   // })
 }

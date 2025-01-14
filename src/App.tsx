@@ -8,7 +8,7 @@ type View = 'upload' | 'view';
 
 function App() {
   const [currentView, setCurrentView] = useState<View>('upload');
-  const uppy = useUppy();
+  const { uppy, files } = useUppy();
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Main Header */}
@@ -82,11 +82,7 @@ function App() {
               {currentView === 'upload' ? (
                 <UppyUploader uppy={uppy} />
               ) : (
-                <></>
-                // <ViewFiles files={files.map(name => ({
-                //   name,
-                //   url: `https://${import.meta.env.VITE_AWS_BUCKET}.s3.${import.meta.env.VITE_AWS_REGION}.amazonaws.com/${name}`
-                // }))} />
+                <ViewFiles files={files} />
               )}
             </div>
           </div>
