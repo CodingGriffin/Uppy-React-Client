@@ -216,7 +216,7 @@ export function useUppy() {
           uppy.off('upload-success', uploadSuccessHandler);
           uppy.off('upload-error', uploadErrorHandler);
         };
-      }, []);
+      }, [uppy]);
 
     return { uppy, files };
   // })
