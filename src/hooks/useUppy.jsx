@@ -8,6 +8,8 @@ import ScreenCapture from '@uppy/screen-capture'
 import '@uppy/core/dist/style.min.css'
 import '@uppy/dashboard/dist/style.min.css'
 
+const endPoint= " https://1b8a-45-144-28-239.ngrok-free.app"
+
 function serializeSubPart(key, value) {
   if (typeof value !== 'object') {
     return [[key, value]]
@@ -52,14 +54,14 @@ export function useUppy() {
         shouldUseMultipart: (file) => file.size > 100 * 0x100000,
 
         async getTemporarySecurityCredentials({ signal }) {
-          const response = await fetch("http://45.144.28.239:8082/s3/sts", { signal })
+          const response = await fetch(`${endPoint}/s3/sts`, { signal })
           console.log(response)
           if (!response.ok) throw new Error("Unsuccessful request", { cause: response })
           return response.json()
         },
 
         async getUploadParameters(file, options) {
-          const response = await fetch("http://45.144.28.239:8082/s3/sign", {
+          const response = await fetch(`${endPoint}/s3/sign`, {
             method: "POST",
             headers: {
               accept: "application/json",
@@ -93,7 +95,7 @@ export function useUppy() {
               .map(([key, value]) => [key, value.toString()])
           )
 
-          const response = await fetch("http://45.144.28.239:8082/s3/multipart", {
+          const response = await fetch(`${endPoint}/s3/multipart`, {
             method: "POST",
             headers: { accept: "application/json" },
             body: serialize({
@@ -117,7 +119,7 @@ export function useUppy() {
 
           const filename = encodeURIComponent(key)
           const response = await fetch(
-            `http://45.144.28.239:8082/s3/multipart/${uploadId}/${partNumber}?key=v2/test/${filename}`,
+            `${endPoint}/s3/multipart/${uploadId}/${partNumber}?key=v2/test/${filename}`,
             { signal }
           )
 
@@ -131,7 +133,7 @@ export function useUppy() {
 
           const filename = encodeURIComponent(key);
           const response = await fetch(
-            `http://45.144.28.239:8082/s3/multipart/${uploadId}?key=v2/test/${filename}`,
+            `${endPoint}/s3/multipart/${uploadId}?key=v2/test/${filename}`,
             { signal }
           );
 
@@ -148,7 +150,7 @@ export function useUppy() {
           const uploadIdEnc = encodeURIComponent(uploadId)
           
           const response = await fetch(
-            `http://45.144.28.239:8082/s3/multipart/${uploadIdEnc}/complete?key=v2/test/${filename}`,
+            `${endPoint}/s3/multipart/${uploadIdEnc}/complete?key=v2/test/${filename}`,
             {
               method: "POST",
               headers: { accept: "application/json" },
@@ -163,7 +165,7 @@ export function useUppy() {
       })
   //     // .use(GoogleDrive, {
   //     //   target: Dashboard,
-  //     //   companionUrl: 'http://45.144.28.239:8082'
+  //     //   companionUrl: `${endPoint}'
   //     // })
       .use(Dropbox, {
         // target: DashboardPlugin,
