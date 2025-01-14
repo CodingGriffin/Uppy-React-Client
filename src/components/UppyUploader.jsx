@@ -42,12 +42,12 @@ export default function UppyUploader() {
     })
 
     uppy
-      .use(DashboardPlugin, {
-        inline: true,
-        target: 'body',
-        height: 470,
-        width: '100%',
-      })
+  //     .use(DashboardPlugin, {
+  //       inline: true,
+  //       target: 'body',
+  //       height: 470,
+  //       width: '100%',
+  //     })
       .use(AwsS3, {
         id: 'aws-s3',
         shouldUseMultipart: (file) => file.size > 100 * 0x100000,
@@ -162,12 +162,12 @@ export default function UppyUploader() {
           return response.json()
         },
       })
-      // .use(GoogleDrive, {
-      //   target: Dashboard,
-      //   companionUrl: 'http://45.144.28.239:8082'
-      // })
+  //     // .use(GoogleDrive, {
+  //     //   target: Dashboard,
+  //     //   companionUrl: 'http://45.144.28.239:8082'
+  //     // })
       .use(Dropbox, {
-        target: DashboardPlugin,
+        // target: DashboardPlugin,
         companionUrl: COMPANION_URL,
         companionAllowedHosts: COMPANION_ALLOWED_HOSTS,
         // companionKeysParams: {
@@ -175,31 +175,27 @@ export default function UppyUploader() {
         //   credentialsName: 'credential_for_uppy_test_with_dropbox',
         // },
       })
-      .use(Webcam, {
-        target: DashboardPlugin
-      })
-      .use(ScreenCapture, {
-        target: DashboardPlugin
-      })
+      .use(Webcam)
+      .use(ScreenCapture)
 
     return uppy
   })
 
-  useEffect(() => {
-    uppy.on('complete', (result) => {
-      console.log('Upload complete! Files:', result.successful)
-    })
+  // useEffect(() => {
+  //   uppy.on('complete', (result) => {
+  //     console.log('Upload complete! Files:', result.successful)
+  //   })
 
-    uppy.on('upload-success', (file) => {
-      console.log('Upload success! File:', file.meta['name'])
-    })
+  //   uppy.on('upload-success', (file) => {
+  //     console.log('Upload success! File:', file.meta['name'])
+  //   })
 
-    return () => uppy.destroy({ removeUploadedFiles: true })
-  }, [uppy])
+  //   return () => uppy.destroy({ removeUploadedFiles: true })
+  // }, [uppy])
 
   return (
     <div className="max-w-4xl mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">File Uploader</h1>
+      {/* <h1 className="text-2xl font-bold mb-4">File Uploader</h1> */}
       <Dashboard
         uppy={uppy}
         id="dashboard"
