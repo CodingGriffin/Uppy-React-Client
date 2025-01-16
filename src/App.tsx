@@ -1,14 +1,26 @@
 import React, { useState } from 'react';
 import { UppyUploader } from './components/UppyUploader'
 import { ViewFiles } from './components/ViewFiles';
-import { Package2, PaintBucket, Database, Upload, Eye } from 'lucide-react';
+import { Package2, PaintBucket, Database, Upload, Eye, FolderTree } from 'lucide-react';
 import { useUppy } from './hooks/useUppy';
 
-type View = 'upload' | 'view';
+type View = 'upload' | 'view' | 'directory';
 
 function App() {
   const [currentView, setCurrentView] = useState<View>('upload');
   const { uppy, files } = useUppy();
+
+  const renderContent = () => {
+    switch (currentView) {
+      case 'upload':
+        return <UppyUploader uppy={uppy} />;
+      case 'view':
+        return <ViewFiles files={files} />;
+      default:
+        return null;
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Main Header */}
@@ -61,7 +73,7 @@ function App() {
                   >
                     <Upload className="w-5 h-5" />
                     <span className="font-medium">Upload Files</span>
-                  </button>
+                  </button>             
                   <button
                     onClick={() => setCurrentView('view')}
                     className={`flex items-center gap-3 p-3 w-full rounded-lg transition-colors ${
@@ -79,11 +91,7 @@ function App() {
 
             {/* Main Content Area */}
             <div className="flex-1 p-4">
-              {currentView === 'upload' ? (
-                <UppyUploader uppy={uppy} />
-              ) : (
-                <ViewFiles files={files} />
-              )}
+              {renderContent()}
             </div>
           </div>
         </div>

@@ -8,7 +8,7 @@ import ScreenCapture from '@uppy/screen-capture'
 import '@uppy/core/dist/style.min.css'
 import '@uppy/dashboard/dist/style.min.css'
 
-const endPoint= "https://everyusb.info"
+const endPoint= "https://f172-45-144-28-239.ngrok-free.app"
 
 function serializeSubPart(key, value) {
   if (typeof value !== 'object') {
@@ -61,6 +61,12 @@ export function useUppy() {
         },
 
         async getUploadParameters(file, options) {
+          const metadata = Object.fromEntries(
+            Object.entries(file.meta || {})
+              .filter(([, value]) => value != null)
+              .map(([key, value]) => [key, value.toString()])
+          )
+
           const response = await fetch(`${endPoint}/s3/sign`, {
             method: "POST",
             headers: {
@@ -69,6 +75,7 @@ export function useUppy() {
             body: serialize({
               filename: file.name,
               contentType: file.type,
+              metadata
             }),
             signal: options.signal,
           })
@@ -181,8 +188,11 @@ export function useUppy() {
 
       useEffect(() => {
         const fileAddedHandler = (file) => {
-          console.log("Added file name: ", file.name)
-          setFiles(prev => [...prev, file.name]);
+          console.log("Added file name: ", file.name, file.meta.relativePath)
+          uppy.setFileMeta(file.id, {
+            relativePath: file.meta.relativePath
+          });
+          // setFiles(prev => [...prev, file.name]);
         };
     
         const fileRemovedHandler = (file) => {
@@ -205,16 +215,16 @@ export function useUppy() {
           console.error('S3 response:', response);
         };
     
-        // uppy.on('file-added', fileAddedHandler);
+        uppy.on('file-added', fileAddedHandler);
         // uppy.on('file-removed', fileRemovedHandler);
-        uppy.on('upload-success', uploadSuccessHandler);
-        uppy.on('upload-error', uploadErrorHandler);
+        // uppy.on('upload-success', uploadSuccessHandler);
+        // uppy.on('upload-error', uploadErrorHandler);
     
         return () => {
-          // uppy.off('file-added', fileAddedHandler);
+          uppy.off('file-added', fileAddedHandler);
           // uppy.off('file-removed', fileRemovedHandler);
-          uppy.off('upload-success', uploadSuccessHandler);
-          uppy.off('upload-error', uploadErrorHandler);
+          // uppy.off('upload-success', uploadSuccessHandler);
+          // uppy.off('upload-error', uploadErrorHandler);
           uppy.clear();
         };
       }, []);
