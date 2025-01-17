@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { COMPANION_URL, COMPANION_ALLOWED_HOSTS } from '@uppy/transloadit';
 import Uppy from '@uppy/core';
 import AwsS3 from '@uppy/aws-s3'
+import Tus from '@uppy/tus'
 import Webcam from '@uppy/webcam'
 import Dropbox from '@uppy/dropbox'
 import ScreenCapture from '@uppy/screen-capture'
@@ -49,127 +50,128 @@ export function useUppy() {
   //       height: 470,
   //       width: '100%',
   //     })
-      .use(AwsS3, {
-        id: 'aws-s3',
-        shouldUseMultipart: (file) => file.size > 100 * 0x100000,
+      // .use(AwsS3, {
+      //   id: 'aws-s3',
+      //   shouldUseMultipart: (file) => file.size > 100 * 0x100000,
 
-        async getTemporarySecurityCredentials({ signal }) {
-          const response = await fetch(`${endPoint}/s3/sts`, { signal })
-          console.log(response)
-          if (!response.ok) throw new Error("Unsuccessful request", { cause: response })
-          return response.json()
-        },
+      //   async getTemporarySecurityCredentials({ signal }) {
+      //     const response = await fetch(`${endPoint}/s3/sts`, { signal })
+      //     console.log(response)
+      //     if (!response.ok) throw new Error("Unsuccessful request", { cause: response })
+      //     return response.json()
+      //   },
 
-        async getUploadParameters(file, options) {
-          const metadata = Object.fromEntries(
-            Object.entries(file.meta || {})
-              .filter(([, value]) => value != null)
-              .map(([key, value]) => [key, value.toString()])
-          )
+      //   async getUploadParameters(file, options) {
+      //     const metadata = Object.fromEntries(
+      //       Object.entries(file.meta || {})
+      //         .filter(([, value]) => value != null)
+      //         .map(([key, value]) => [key, value.toString()])
+      //     )
 
-          const response = await fetch(`${endPoint}/s3/sign`, {
-            method: "POST",
-            headers: {
-              accept: "application/json",
-            },
-            body: serialize({
-              filename: file.name,
-              contentType: file.type,
-              metadata
-            }),
-            signal: options.signal,
-          })
-          console.log(response)
+      //     const response = await fetch(`${endPoint}/s3/sign`, {
+      //       method: "POST",
+      //       headers: {
+      //         accept: "application/json",
+      //       },
+      //       body: serialize({
+      //         filename: file.name,
+      //         contentType: file.type,
+      //         metadata
+      //       }),
+      //       signal: options.signal,
+      //     })
+      //     console.log(response)
 
-          if (!response.ok) throw new Error("Unsuccessful request", { cause: response })
-          const data = await response.json()
+      //     if (!response.ok) throw new Error("Unsuccessful request", { cause: response })
+      //     const data = await response.json()
 
-          return {
-            method: data.method,
-            url: data.url,
-            fields: {},
-            headers: {
-              "Content-Type": file.type,
-            },
-          }
-        },
+      //     return {
+      //       method: data.method,
+      //       url: data.url,
+      //       fields: {},
+      //       headers: {
+      //         "Content-Type": file.type,
+      //       },
+      //     }
+      //   },
 
-        // Multipart upload methods
-        async createMultipartUpload(file, signal) {
-          const metadata = Object.fromEntries(
-            Object.entries(file.meta || {})
-              .filter(([, value]) => value != null)
-              .map(([key, value]) => [key, value.toString()])
-          )
+      //   // Multipart upload methods
+      //   async createMultipartUpload(file, signal) {
+      //     const metadata = Object.fromEntries(
+      //       Object.entries(file.meta || {})
+      //         .filter(([, value]) => value != null)
+      //         .map(([key, value]) => [key, value.toString()])
+      //     )
 
-          const response = await fetch(`${endPoint}/s3/multipart`, {
-            method: "POST",
-            headers: { accept: "application/json" },
-            body: serialize({
-              filename: file.name,
-              type: file.type,
-              metadata,
-            }),
-            signal,
-          })
+      //     const response = await fetch(`${endPoint}/s3/multipart`, {
+      //       method: "POST",
+      //       headers: { accept: "application/json" },
+      //       body: serialize({
+      //         filename: file.name,
+      //         type: file.type,
+      //         metadata,
+      //       }),
+      //       signal,
+      //     })
 
-          if (!response.ok) throw new Error("Unsuccessful request", { cause: response })
-          return response.json()
-        },
+      //     if (!response.ok) throw new Error("Unsuccessful request", { cause: response })
+      //     return response.json()
+      //   },
 
-        async signPart(file, options) {
-          const { uploadId, key, partNumber, signal } = options
+      //   async signPart(file, options) {
+      //     const { uploadId, key, partNumber, signal } = options
 
-          if (!uploadId || !key || !partNumber) {
-            throw new Error("Cannot sign without a key, an uploadId, and a partNumber")
-          }
+      //     if (!uploadId || !key || !partNumber) {
+      //       throw new Error("Cannot sign without a key, an uploadId, and a partNumber")
+      //     }
 
-          const filename = encodeURIComponent(key)
-          const response = await fetch(
-            `${endPoint}/s3/multipart/${uploadId}/${partNumber}?key=v2/test/${filename}`,
-            { signal }
-          )
+      //     const filename = encodeURIComponent(key)
+      //     const response = await fetch(
+      //       `${endPoint}/s3/multipart/${uploadId}/${partNumber}?key=v2/test/${filename}`,
+      //       { signal }
+      //     )
 
-          if (!response.ok) throw new Error("Unsuccessful request", { cause: response })
-          return response.json()
-        },
+      //     if (!response.ok) throw new Error("Unsuccessful request", { cause: response })
+      //     return response.json()
+      //   },
 
-        async listParts(file, { key, uploadId }, signal) {
-          console.log("here");
-          signal?.throwIfAborted();
+      //   async listParts(file, { key, uploadId }, signal) {
+      //     console.log("here");
+      //     signal?.throwIfAborted();
 
-          const filename = encodeURIComponent(key);
-          const response = await fetch(
-            `${endPoint}/s3/multipart/${uploadId}?key=v2/test/${filename}`,
-            { signal }
-          );
+      //     const filename = encodeURIComponent(key);
+      //     const response = await fetch(
+      //       `${endPoint}/s3/multipart/${uploadId}?key=v2/test/${filename}`,
+      //       { signal }
+      //     );
 
-          if (!response.ok)
-            throw new Error("Unsuccessful request", { cause: response });
+      //     if (!response.ok)
+      //       throw new Error("Unsuccessful request", { cause: response });
 
-          const data = await response.json();
+      //     const data = await response.json();
 
-          return data;
-        },
+      //     return data;
+      //   },
 
-        async completeMultipartUpload(file, { key, uploadId, parts }, signal) {
-          const filename = encodeURIComponent(key)
-          const uploadIdEnc = encodeURIComponent(uploadId)
+      //   async completeMultipartUpload(file, { key, uploadId, parts }, signal) {
+      //     const filename = encodeURIComponent(key)
+      //     const uploadIdEnc = encodeURIComponent(uploadId)
           
-          const response = await fetch(
-            `${endPoint}/s3/multipart/${uploadIdEnc}/complete?key=v2/test/${filename}`,
-            {
-              method: "POST",
-              headers: { accept: "application/json" },
-              body: serialize({ parts }),
-              signal,
-            }
-          )
+      //     const response = await fetch(
+      //       `${endPoint}/s3/multipart/${uploadIdEnc}/complete?key=v2/test/${filename}`,
+      //       {
+      //         method: "POST",
+      //         headers: { accept: "application/json" },
+      //         body: serialize({ parts }),
+      //         signal,
+      //       }
+      //     )
 
-          if (!response.ok) throw new Error("Unsuccessful request", { cause: response })
-          return response.json()
-        },
-      })
+      //     if (!response.ok) throw new Error("Unsuccessful request", { cause: response })
+      //     return response.json()
+      //   },
+      // })
+      .use(Tus, { endpoint: 'https://a6e7-45-144-28-239.ngrok-free.app/uploads/' })
   //     // .use(GoogleDrive, {
   //     //   target: Dashboard,
   //     //   companionUrl: `${endPoint}'
