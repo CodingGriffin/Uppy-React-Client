@@ -176,9 +176,10 @@ export function useUppy() {
       resume: true,
       retryDelays: [0, 1000, 3000, 5000],
       chunkSize: 1 * 1024 * 1024,
+      RespectForwardedHeaders: true,
       removeFingerprintOnSuccess: true,
       headers: {
-        "Access-Control-Allow-Origin": "https://uppy-react-client.vercel.app",
+        "Access-Control-Allow-Origin": "*",
       },
       withCredentials: true,
     })
