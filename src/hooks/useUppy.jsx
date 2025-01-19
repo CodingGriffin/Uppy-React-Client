@@ -171,7 +171,17 @@ export function useUppy() {
       //     return response.json()
       //   },
       // })https://9ad1-45-144-28-239.ngrok-free.app
-      .use(Tus, { endpoint: 'https://9ad1-45-144-28-239.ngrok-free.app/uploads/' })
+      .use(Tus, { endpoint: 'https://9ad1-45-144-28-239.ngrok-free.app/uploads/',
+        resume: true,
+        retryDelays: [0, 1000, 3000, 5000],
+        chunkSize: 1 * 1024 * 1024,
+        removeFingerprintOnSuccess: true,
+        RespectForwardedHeaders: true,
+        headers: {
+          "Access-Control-Allow-Origin": "*",
+        },
+        withCredentials: true,
+       })
   //     // .use(GoogleDrive, {
   //     //   target: Dashboard,
   //     //   companionUrl: `${endPoint}'
