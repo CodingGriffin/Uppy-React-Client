@@ -170,8 +170,8 @@ export function useUppy() {
       //     if (!response.ok) throw new Error("Unsuccessful request", { cause: response })
       //     return response.json()
       //   },
-      // })
-      .use(Tus, { endpoint: 'https://79df-45-144-28-239.ngrok-free.app/uploads/' })
+      // })https://9ad1-45-144-28-239.ngrok-free.app
+      .use(Tus, { endpoint: 'https://9ad1-45-144-28-239.ngrok-free.app/uploads/' })
   //     // .use(GoogleDrive, {
   //     //   target: Dashboard,
   //     //   companionUrl: `${endPoint}'
