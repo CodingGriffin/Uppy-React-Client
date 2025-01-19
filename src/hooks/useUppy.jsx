@@ -176,7 +176,7 @@ export function useUppy() {
         retryDelays: [0, 1000, 3000, 5000],
         chunkSize: 1 * 1024 * 1024,
         removeFingerprintOnSuccess: true,
-        RespectForwardedHeaders: true,
+        // RespectForwardedHeaders: true,
         headers: {
           "Access-Control-Allow-Origin": "*",
         },
