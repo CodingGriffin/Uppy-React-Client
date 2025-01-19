@@ -178,9 +178,6 @@ export function useUppy() {
       chunkSize: 1 * 1024 * 1024,
       RespectForwardedHeaders: true,
       removeFingerprintOnSuccess: true,
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-      },
       withCredentials: true,
     })
     //     // .use(GoogleDrive, {
