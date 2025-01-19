@@ -171,7 +171,9 @@ export function useUppy() {
       //     return response.json()
       //   },
       // })https://9ad1-45-144-28-239.ngrok-free.app
-      .use(Tus, { endpoint: 'https://9ad1-45-144-28-239.ngrok-free.app/uploads/',
+      .use(Tus, { 
+        // endpoint: 'https://9ad1-45-144-28-239.ngrok-free.app/uploads/',
+        endpoint:'https://45.144.28.239:3000/uploads/'
       })
   //     // .use(GoogleDrive, {
   //     //   target: Dashboard,
