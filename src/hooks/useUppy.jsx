@@ -173,6 +173,8 @@ export function useUppy() {
       // })https://9ad1-45-144-28-239.ngrok-free.app
       .use(Tus, { 
         endpoint: 'https://7562-45-144-28-239.ngrok-free.app/uploads/',
+        removeFingerprintOnSuccess: false,
+
         // endpoint:'http://45.144.28.239:3000/uploads/'
       })
   //     // .use(GoogleDrive, {
