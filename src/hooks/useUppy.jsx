@@ -185,8 +185,8 @@ export function useUppy() {
         //   credentialsName: 'credential_for_uppy_test_with_dropbox',
         // },
       })
-      .use(Webcam)
-      .use(ScreenCapture)
+      // .use(Webcam)
+      // .use(ScreenCapture)
 
       useEffect(() => {
         const fileAddedHandler = (file) => {
