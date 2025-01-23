@@ -171,7 +171,7 @@ export function useUppy() {
       //     return response.json()
       //   },
       // })
-      .use(Tus, { endpoint: 'http://45.144.28.239:3000/uploads/', resume: true, retryDelays: [0, 1000, 3000, 5000], })
+      .use(Tus, { endpoint: ' https://3732-45-144-28-239.ngrok-free.app/uploads/', resume: true, retryDelays: [0, 1000, 3000, 5000], })
   //     // .use(GoogleDrive, {
   //     //   target: Dashboard,
   //     //   companionUrl: `${endPoint}'
