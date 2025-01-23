@@ -171,7 +171,7 @@ export function useUppy() {
       //     return response.json()
       //   },
       // })
-      .use(Tus, { endpoint: 'https://a6e7-45-144-28-239.ngrok-free.app/uploads/' })
+      .use(Tus, { endpoint: 'https://everyusb.info/uploads/', resume: true, retryDelays: [0, 1000, 3000, 5000], })
   //     // .use(GoogleDrive, {
   //     //   target: Dashboard,
   //     //   companionUrl: `${endPoint}'
