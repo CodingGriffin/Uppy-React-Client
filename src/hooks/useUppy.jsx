@@ -2,8 +2,11 @@ import { useState, useEffect } from 'react';
 import { COMPANION_URL, COMPANION_ALLOWED_HOSTS } from '@uppy/transloadit';
 import Uppy from '@uppy/core';
 import Tus from '@uppy/tus'
-import Dropbox from '@uppy/dropbox'
+import Box from '@uppy/box';
+import OneDrive from '@uppy/onedrive';
 import GoogleDrive from '@uppy/google-drive';
+import Dropbox from '@uppy/dropbox'
+
 import Webcam from '@uppy/webcam'
 import ScreenCapture from '@uppy/screen-capture'
 import AwsS3 from '@uppy/aws-s3'
@@ -174,6 +177,18 @@ export function useUppy() {
       //   },
       // })
       .use(Tus, { endpoint: ' https://3732-45-144-28-239.ngrok-free.app/uploads/', resume: true, retryDelays: [0, 1000, 3000, 5000], })
+      .use(Box, {
+        companionUrl: COMPANION_URL,
+        companionAllowedHosts: COMPANION_ALLOWED_HOSTS,
+      })
+      .use(OneDrive, {
+        companionUrl: COMPANION_URL,
+        companionAllowedHosts: COMPANION_ALLOWED_HOSTS,
+      })
+      .use(GoogleDrive, {
+        companionUrl: COMPANION_URL,
+        companionAllowedHosts: COMPANION_ALLOWED_HOSTS,
+      })
       .use(Dropbox, {
         // target: DashboardPlugin,
         companionUrl: COMPANION_URL,
@@ -182,10 +197,6 @@ export function useUppy() {
         //   key: "whc8tg2pockrsqj",
         //   credentialsName: 'credential_for_uppy_test_with_dropbox',
         // },
-      })
-      .use(GoogleDrive, {
-        companionUrl: COMPANION_URL,
-        companionAllowedHosts: COMPANION_ALLOWED_HOSTS,
       })
       // .use(Webcam)
       // .use(ScreenCapture)
