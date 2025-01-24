@@ -5,6 +5,7 @@ import Tus from '@uppy/tus'
 import Box from '@uppy/box';
 import OneDrive from '@uppy/onedrive';
 import GoogleDrive from '@uppy/google-drive';
+import GoogleDrivePicker from '@uppy/google-drive-picker';
 import Dropbox from '@uppy/dropbox'
 
 import Webcam from '@uppy/webcam'
@@ -185,9 +186,12 @@ export function useUppy() {
         companionUrl: COMPANION_URL,
         companionAllowedHosts: COMPANION_ALLOWED_HOSTS,
       })
-      .use(GoogleDrive, {
+      .use(GoogleDrivePicker, {
         companionUrl: COMPANION_URL,
         companionAllowedHosts: COMPANION_ALLOWED_HOSTS,
+        clientId: '704958830010-8ksj7hhie33b3ui2elhdpu8elhnrpdhq.apps.googleusercontent.com',
+        apiKey: 'AIzaSyD27ooad_TH7nZZ19__6aD5m-cUxZQtQJQ',
+        appId: '704958830010',
       })
       .use(Dropbox, {
         // target: DashboardPlugin,
