@@ -192,7 +192,7 @@ export function useUppy() {
         // clientId: '704958830010-8ksj7hhie33b3ui2elhdpu8elhnrpdhq.apps.googleusercontent.com',
         // apiKey: 'AIzaSyD27ooad_TH7nZZ19__6aD5m-cUxZQtQJQ',
         // appId: '704958830010',
-        companionUrl: 'https://companion.uppy.io',
+        companionUrl: 'http://localhost:3020/companion',
         companionAllowedHosts: ['.*'],
         // companionWSProtocol: 'ws',
         // companionSocketTimeout: 600000 // Match server timeout
@@ -201,7 +201,7 @@ export function useUppy() {
         // companionUrl: COMPANION_URL,
         // companionAllowedHosts: COMPANION_ALLOWED_HOSTS,
         companionUrl: 'http://localhost:3020/companion',
-        companionAllowedHosts: /localhost:3020/        
+        companionAllowedHosts: ['.*'],      
       })
       // .use(Webcam)
       // .use(ScreenCapture)
