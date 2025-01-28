@@ -177,7 +177,7 @@ export function useUppy() {
       //     return response.json()
       //   },
       // })
-      .use(Tus, { endpoint: ' https://3732-45-144-28-239.ngrok-free.app/uploads/', resume: true, retryDelays: [0, 1000, 3000, 5000], })
+      .use(Tus, { endpoint: 'http://45.144.28.239:3000/uploads', resume: true, retryDelays: [0, 1000, 3000, 5000], chunkSize: 1 * 1024 * 1024 })
       .use(Box, {
         companionUrl: COMPANION_URL,
         companionAllowedHosts: COMPANION_ALLOWED_HOSTS,
@@ -186,21 +186,22 @@ export function useUppy() {
         companionUrl: COMPANION_URL,
         companionAllowedHosts: COMPANION_ALLOWED_HOSTS,
       })
-      .use(GoogleDrivePicker, {
-        companionUrl: COMPANION_URL,
-        companionAllowedHosts: COMPANION_ALLOWED_HOSTS,
-        clientId: '535654744103-7nqe8un4cnfmtd5abqusc0n89k5jefdc.apps.googleusercontent.com',
-        apiKey: 'AIzaSyAX10DC90t55rT7pQdAlm2ARbSx0vp29oA',
-        appId: 'uppy-448817',
+      .use(GoogleDrive, {
+        // companionUrl: COMPANION_URL,
+        // companionAllowedHosts: COMPANION_ALLOWED_HOSTS,
+        // clientId: '704958830010-8ksj7hhie33b3ui2elhdpu8elhnrpdhq.apps.googleusercontent.com',
+        // apiKey: 'AIzaSyD27ooad_TH7nZZ19__6aD5m-cUxZQtQJQ',
+        // appId: '704958830010',
+        companionUrl: 'https://companion.uppy.io',
+        companionAllowedHosts: ['.*'],
+        // companionWSProtocol: 'ws',
+        // companionSocketTimeout: 600000 // Match server timeout
       })
       .use(Dropbox, {
-        // target: DashboardPlugin,
-        companionUrl: COMPANION_URL,
-        companionAllowedHosts: COMPANION_ALLOWED_HOSTS,
-        // companionKeysParams: {
-        //   key: "whc8tg2pockrsqj",
-        //   credentialsName: 'credential_for_uppy_test_with_dropbox',
-        // },
+        // companionUrl: COMPANION_URL,
+        // companionAllowedHosts: COMPANION_ALLOWED_HOSTS,
+        companionUrl: 'http://localhost:3020/companion',
+        companionAllowedHosts: /localhost:3020/        
       })
       // .use(Webcam)
       // .use(ScreenCapture)
