@@ -177,7 +177,7 @@ export function useUppy() {
       //     return response.json()
       //   },
       // })
-      .use(Tus, { endpoint: 'http://45.144.28.239:3000/uploads', resume: true, retryDelays: [0, 1000, 3000, 5000], chunkSize: 1 * 1024 * 1024 })
+      .use(Tus, { endpoint: 'https://everyusb.info/uploads', resume: true, retryDelays: [0, 1000, 3000, 5000], chunkSize: 1 * 1024 * 1024 })
       .use(Box, {
         companionUrl: COMPANION_URL,
         companionAllowedHosts: COMPANION_ALLOWED_HOSTS,
