@@ -179,8 +179,8 @@ export function useUppy() {
       // })
       .use(Tus, { endpoint: 'http://localhost:3000/uploads', resume: true, retryDelays: [0, 1000, 3000, 5000], chunkSize: 5 * 1024 * 1024 })
       .use(Box, {
-        companionUrl: COMPANION_URL,
-        companionAllowedHosts: COMPANION_ALLOWED_HOSTS,
+        companionUrl: 'http://localhost:3020/companion',
+        companionAllowedHosts: ['.*'],
       })
       .use(OneDrive, {
         companionUrl: COMPANION_URL,
@@ -194,14 +194,14 @@ export function useUppy() {
         // appId: '704958830010',
         companionUrl: 'http://localhost:3020/companion',
         companionAllowedHosts: ['.*'],
-        companionWSProtocol: 'ws',
-        companionSocketTimeout: 600000 // Match server timeout
+        // companionWSProtocol: 'ws',
+        // companionSocketTimeout: 600000 // Match server timeout
       })
       .use(Dropbox, {
         // companionUrl: COMPANION_URL,
         // companionAllowedHosts: COMPANION_ALLOWED_HOSTS,
         companionUrl: 'http://localhost:3020/companion',
-        companionAllowedHosts: /localhost:3020/        
+        companionAllowedHosts: ['.*'],      
       })
       // .use(Webcam)
       // .use(ScreenCapture)
