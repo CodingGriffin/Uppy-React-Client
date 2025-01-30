@@ -44,7 +44,7 @@ export function useUppy() {
       debug: true,
       restrictions: {
         maxFileSize: 1024 * 1024 * 1024, // 1GB
-        maxNumberOfFiles: 10,
+        maxNumberOfFiles: null,
         allowedFileTypes: null // allow all file types
       }
     })
@@ -177,10 +177,10 @@ export function useUppy() {
       //     return response.json()
       //   },
       // })
-      .use(Tus, { endpoint: 'https://everyusb.info/uploads', resume: true, retryDelays: [0, 1000, 3000, 5000], chunkSize: 1 * 1024 * 1024 })
+      .use(Tus, { endpoint: 'http://45.144.28.239:3000/uploads', resume: true, retryDelays: [0, 1000, 3000, 5000], chunkSize: 1 * 1024 * 1024 })
       .use(Box, {
-        companionUrl: COMPANION_URL,
-        companionAllowedHosts: COMPANION_ALLOWED_HOSTS,
+        companionUrl: 'http://localhost:3020/companion',
+        companionAllowedHosts: ['.*'],
       })
       .use(OneDrive, {
         companionUrl: COMPANION_URL,
