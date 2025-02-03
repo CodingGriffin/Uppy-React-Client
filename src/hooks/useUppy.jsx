@@ -15,7 +15,8 @@ import AwsS3 from '@uppy/aws-s3'
 import '@uppy/core/dist/style.min.css'
 import '@uppy/dashboard/dist/style.min.css'
 
-// const endPoint= "https://f172-45-144-28-239.ngrok-free.app"
+const endPoint= "http://everyusb.info:3000/uploads"
+const companionUrl = "http://localhost:3020/companion";
 
 function serializeSubPart(key, value) {
   if (typeof value !== 'object') {
@@ -177,14 +178,14 @@ export function useUppy() {
       //     return response.json()
       //   },
       // })
-      .use(Tus, { endpoint: 'http://everyusb.info:3000/uploads', retryDelays: [0, 1000, 3000, 5000], chunkSize: 5 * 1024 * 1024 })
+      .use(Tus, { endpoint: endPoint, retryDelays: [0, 1000, 3000, 5000], chunkSize: 5 * 1024 * 1024 })
       .use(Box, {
-        companionUrl: 'http://localhost:3020/companion',
+        companionUrl: companionUrl,
         companionAllowedHosts: ['.*'],
       })
       .use(OneDrive, {
-        companionUrl: COMPANION_URL,
-        companionAllowedHosts: COMPANION_ALLOWED_HOSTS,
+        companionUrl: companionUrl,
+        companionAllowedHosts: ['.*'],
       })
       .use(GoogleDrive, {
         // companionUrl: COMPANION_URL,
@@ -192,7 +193,7 @@ export function useUppy() {
         // clientId: '704958830010-8ksj7hhie33b3ui2elhdpu8elhnrpdhq.apps.googleusercontent.com',
         // apiKey: 'AIzaSyD27ooad_TH7nZZ19__6aD5m-cUxZQtQJQ',
         // appId: '704958830010',
-        companionUrl: 'http://localhost:3020/companion',
+        companionUrl: companionUrl,
         companionAllowedHosts: ['.*'],
         // companionWSProtocol: 'ws',
         // companionSocketTimeout: 600000 // Match server timeout
@@ -200,7 +201,7 @@ export function useUppy() {
       .use(Dropbox, {
         // companionUrl: COMPANION_URL,
         // companionAllowedHosts: COMPANION_ALLOWED_HOSTS,
-        companionUrl: 'http://localhost:3020/companion',
+        companionUrl: companionUrl,
         companionAllowedHosts: ['.*'],      
       })
       // .use(Webcam)
